@@ -56,6 +56,7 @@ class ProjectPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                'project.tenant.exists',
             ])
             ->authMiddleware([
                 Authenticate::class,
