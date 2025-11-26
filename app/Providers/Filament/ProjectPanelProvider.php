@@ -61,7 +61,7 @@ class ProjectPanelProvider extends PanelProvider
                 'project.tenant.exists',
             ])
             ->authMiddleware([
-                Authenticate::class,
+
             ]);
     }
 }
