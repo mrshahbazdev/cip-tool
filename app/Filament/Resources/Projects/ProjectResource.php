@@ -6,11 +6,9 @@ use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Project;
-use App\Models\User;
 use BackedEnum;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,7 +17,7 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    // TYPE Sahi + Heroicon enum use
+    // yahan type sahi rakho:
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $navigationLabel = 'Projects';
@@ -30,67 +28,66 @@ class ProjectResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Project Info')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Project Name')
-                            ->required()
-                            ->maxLength(255),
+        return $schema->schema([
+            \Filament\Schemas\Section::make('Project Info')
+                ->schema([
+                    \Filament\Forms\Components\TextInput::make('name')
+                        ->label('Project Name')
+                        ->required()
+                        ->maxLength(255),
 
-                        Forms\Components\TextInput::make('slug')
-                            ->label('Subdomain Slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->helperText('Ye hi subdomain hoga, jaise: company.cip-tools.com'),
+                    \Filament\Forms\Components\TextInput::make('slug')
+                        ->label('Subdomain Slug')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(ignoreRecord: true)
+                        ->helperText('Ye hi subdomain hoga, jaise: company.cip-tools.com'),
 
-                        Forms\Components\Select::make('owner_id')
-                            ->label('Owner (Super Admin)')
-                            ->relationship('owner', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                    \Filament\Forms\Components\Select::make('owner_id')
+                        ->label('Owner (Super Admin)')
+                        ->relationship('owner', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
 
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(false),
+                    \Filament\Forms\Components\Toggle::make('is_active')
+                        ->label('Active')
+                        ->default(false),
 
-                        Forms\Components\DateTimePicker::make('trial_ends_at')
-                            ->label('Trial Ends At')
-                            ->seconds(false)
-                            ->native(false),
-                    ])
-                    ->columns(2),
+                    \Filament\Forms\Components\DateTimePicker::make('trial_ends_at')
+                        ->label('Trial Ends At')
+                        ->seconds(false)
+                        ->native(false),
+                ])
+                ->columns(2),
 
-                Forms\Components\Section::make('Branding & Bonus')
-                    ->schema([
-                        Forms\Components\FileUpload::make('logo_path')
-                            ->label('Logo')
-                            ->image()
-                            ->directory('projects/logos')
-                            ->imageEditor()
-                            ->nullable(),
+            \Filament\Schemas\Section::make('Branding & Bonus')
+                ->schema([
+                    \Filament\Forms\Components\FileUpload::make('logo_path')
+                        ->label('Logo')
+                        ->image()
+                        ->directory('projects/logos')
+                        ->imageEditor()
+                        ->nullable(),
 
-                        Forms\Components\TextInput::make('slogan')
-                            ->label('Slogan / Motto')
-                            ->maxLength(255)
-                            ->placeholder('Thought together and made together'),
+                    \Filament\Forms\Components\TextInput::make('slogan')
+                        ->label('Slogan / Motto')
+                        ->maxLength(255)
+                        ->placeholder('Thought together and made together'),
 
-                        Forms\Components\Toggle::make('bonus_enabled')
-                            ->label('Bonus Enabled')
-                            ->default(false),
+                    \Filament\Forms\Components\Toggle::make('bonus_enabled')
+                        ->label('Bonus Enabled')
+                        ->default(false),
 
-                        Forms\Components\Textarea::make('bonus_text')
-                            ->label('Bonus / Remuneration Info')
-                            ->rows(3)
-                            ->helperText('Note: Bonus Cip-Tools.com nahi deta, project owner deta hai.'),
-                    ])
-                    ->columns(2),
-            ]);
+                    \Filament\Forms\Components\Textarea::make('bonus_text')
+                        ->label('Bonus / Remuneration Info')
+                        ->rows(3)
+                        ->helperText('Note: Bonus Cip-Tools.com nahi deta, project owner deta hai.'),
+                ])
+                ->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -127,10 +124,7 @@ class ProjectResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active'),
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
