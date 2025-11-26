@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Projects;
 
-use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\Projects\Pages\CreateProject;
+use App\Filament\Resources\Projects\Pages\EditProject;
+use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Project;
 use App\Models\User;
+use BackedEnum;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconName;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -16,7 +19,8 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = IconName::RectangleStack;
+    // TYPE Sahi + Heroicon enum use
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $navigationLabel = 'Projects';
 
@@ -59,7 +63,8 @@ class ProjectResource extends Resource
                             ->label('Trial Ends At')
                             ->seconds(false)
                             ->native(false),
-                    ])->columns(2),
+                    ])
+                    ->columns(2),
 
                 Forms\Components\Section::make('Branding & Bonus')
                     ->schema([
@@ -83,7 +88,8 @@ class ProjectResource extends Resource
                             ->label('Bonus / Remuneration Info')
                             ->rows(3)
                             ->helperText('Note: Bonus Cip-Tools.com nahi deta, project owner deta hai.'),
-                    ])->columns(2),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -147,9 +153,9 @@ class ProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'edit'   => Pages\EditProject::route('/{record}/edit'),
+            'index'  => ListProjects::route('/'),
+            'create' => CreateProject::route('/create'),
+            'edit'   => EditProject::route('/{record}/edit'),
         ];
     }
 }
