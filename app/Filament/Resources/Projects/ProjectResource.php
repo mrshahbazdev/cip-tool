@@ -91,50 +91,49 @@ class ProjectResource extends Resource
     }
 
     public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Project')
-                    ->searchable()
-                    ->sortable(),
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('name')
+                ->label('Project')
+                ->searchable()
+                ->sortable(),
 
-                Tables\Columns\TextColumn::make('slug')
-                    ->label('Subdomain')
-                    ->searchable(),
+            Tables\Columns\TextColumn::make('slug')
+                ->label('Subdomain')
+                ->searchable(),
 
-                Tables\Columns\TextColumn::make('owner.name')
-                    ->label('Owner')
-                    ->sortable()
-                    ->searchable(),
+            Tables\Columns\TextColumn::make('owner.name')
+                ->label('Owner')
+                ->sortable()
+                ->searchable(),
 
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean(),
+            Tables\Columns\IconColumn::make('is_active')
+                ->label('Active')
+                ->boolean(),
 
-                Tables\Columns\TextColumn::make('trial_ends_at')
-                    ->label('Trial Ends')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(),
+            Tables\Columns\TextColumn::make('trial_ends_at')
+                ->label('Trial Ends')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+            Tables\Columns\TextColumn::make('created_at')
+                ->label('Created')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ])
+        ->filters([
+            //
+        ])
+        ->actions([
+            // Koi explicit action nahi – default behaviour pe chhod do
+        ])
+        ->bulkActions([
+            // Bulk actions bhi abhi hata dete hain
+        ]);
+}
 
 
     public static function getRelations(): array
