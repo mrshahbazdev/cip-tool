@@ -8,15 +8,10 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Filament\Models\Concerns\HasTenants;
-use Filament\Models\Contracts\HasTenants as HasTenantsContract;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable implements FilamentUser, HasTenantsContract
-
+class User extends Authenticatable implements FilamentUser
 {
-    use   HasFactory, Notifiable, HasTenants;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -59,11 +54,11 @@ class User extends Authenticatable implements FilamentUser, HasTenantsContract
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Abhi simple rule: sirf is_admin users Filament panels access kar sakte hain
+        // Sirf is_admin users Filament panel access kar sakte hain
         return $this->is_admin === true;
     }
 
-    // Optional, agar kahin purana code isko use kar raha ho:
+    // Optional backward-compat:
     public function canAccessFilament(): bool
     {
         return $this->is_admin === true;
@@ -75,27 +70,17 @@ class User extends Authenticatable implements FilamentUser, HasTenantsContract
     |--------------------------------------------------------------------------
     */
 
-    // Projects jahan ye OWNER hai (owner_id)
+    // Projects jahan ye OWNER hai (owner_id column)
     public function ownedProjects()
     {
         return $this->hasMany(Project::class, 'owner_id');
     }
 
-    // Projects jahan ye MEMBER hai (pivot project_user)
+    // Projects jahan ye MEMBER hai (project_user pivot se)
     public function memberProjects()
     {
         return $this->belongsToMany(Project::class, 'project_user')
             ->withPivot('role')
             ->withTimestamps();
-    }
-    public function getTenants(Panel $panel): Collection
-    {
-        // yahan memberProjects() (pivot) ko tenants treat kareinge
-        return $this->memberProjects;
-    }
-
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return $this->memberProjects()->whereKey($tenant)->exists();
     }
 }
