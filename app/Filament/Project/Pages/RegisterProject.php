@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -17,8 +18,7 @@ class RegisterProject extends RegisterTenant
         return 'Start free trial';
     }
 
-    // Yahan koi type-hint nahi (na parameter pe, na return pe)
-    public function form($schema)
+    public function form(Schema $schema): Schema
     {
         return $schema->schema([
             Forms\Components\Section::make('Workspace')
@@ -102,3 +102,4 @@ class RegisterProject extends RegisterTenant
         return $project;
     }
 }
+
