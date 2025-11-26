@@ -8,10 +8,15 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Concerns\HasTenants;
+use Filament\Models\Contracts\HasTenants as HasTenantsContract;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasTenantsContract
+
 {
-    use  HasFactory, Notifiable;
+    use   HasFactory, Notifiable, HasTenants;
 
     /**
      * The attributes that are mass assignable.
@@ -82,5 +87,15 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Project::class, 'project_user')
             ->withPivot('role')
             ->withTimestamps();
+    }
+    public function getTenants(Panel $panel): Collection
+    {
+        // yahan memberProjects() (pivot) ko tenants treat kareinge
+        return $this->memberProjects;
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->memberProjects()->whereKey($tenant)->exists();
     }
 }
