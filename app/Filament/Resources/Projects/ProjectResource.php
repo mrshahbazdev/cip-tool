@@ -126,7 +126,6 @@ class ProjectResource extends Resource
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -136,6 +135,7 @@ class ProjectResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {
