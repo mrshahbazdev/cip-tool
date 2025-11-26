@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -46,8 +47,16 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // yahan abhi simple is_admin check rakhtay hain
+        return $this->is_admin === 1;
+    }
+
     public function canAccessFilament(): bool
     {
-        return str_ends_with($this->email, '@example.com');
+        // backward compatibility (agar kahin use ho)
+        return $this->is_admin === 1;
     }
+
 }
