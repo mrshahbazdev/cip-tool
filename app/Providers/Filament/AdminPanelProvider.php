@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\Project;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -18,7 +19,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
+            ->tenant(Project::class) // Project ko tenant model bana diya [web:211]
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
