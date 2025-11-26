@@ -4,18 +4,12 @@ namespace App\Filament\Resources\Projects\RelationManagers;
 
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -25,21 +19,13 @@ class MembersRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                DateTimePicker::make('email_verified_at'),
-                TextInput::make('password')
-                    ->password()
-                    ->required(),
-                Toggle::make('is_admin')
-                    ->required(),
-            ]);
+        return $schema->schema([
+            // Pivot role field
+            TextInput::make('pivot.role')
+                ->label('Role')
+                ->default('member')
+                ->required(),
+        ]);
     }
 
     public function table(Table $table): Table
@@ -48,40 +34,45 @@ class MembersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label('User')
                     ->searchable(),
+
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                IconColumn::make('is_admin')
-                    ->boolean(),
+
+                TextColumn::make('pivot.role')
+                    ->label('Role')
+                    ->badge(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
-                AttachAction::make(),
+                // Naye member attach karne ke liye
+                AttachAction::make()
+                    ->label('Attach User')
+                    ->form(fn (Schema $schema) => $schema->schema([
+                        Select::make('recordId')
+                            ->label('User')
+                            ->relationship('members', 'name')
+                            ->searchable()
+                            ->required(),
+                        TextInput::make('role')
+                            ->label('Role')
+                            ->default('member')
+                            ->required(),
+                    ])),
             ])
             ->recordActions([
-                EditAction::make(),
+                // Pivot role edit + detach
+                \Filament\Actions\EditAction::make()
+                    ->label('Edit Role'),
                 DetachAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
-                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
