@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use BackedEnum;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
-use App\Models\Project;
+
 class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use  HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +22,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -36,32 +36,51 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password'          => 'hashed',
+        'is_admin'          => 'boolean',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filament access
+    |--------------------------------------------------------------------------
+    */
+
+    public function canAccessPanel(Panel $panel): bool
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        // Abhi simple rule: sirf is_admin users Filament panels access kar sakte hain
+        return $this->is_admin === true;
     }
-    public function projects()
+
+    // Optional, agar kahin purana code isko use kar raha ho:
+    public function canAccessFilament(): bool
+    {
+        return $this->is_admin === true;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    // Projects jahan ye OWNER hai (owner_id)
+    public function ownedProjects()
     {
         return $this->hasMany(Project::class, 'owner_id');
     }
 
-    public function canAccessPanel(Panel $panel): bool
+    // Projects jahan ye MEMBER hai (pivot project_user)
+    public function memberProjects()
     {
-        // yahan abhi simple is_admin check rakhtay hain
-        return $this->is_admin === 1;
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->withPivot('role')
+            ->withTimestamps();
     }
-
-    public function canAccessFilament(): bool
-    {
-        // backward compatibility (agar kahin use ho)
-        return $this->is_admin === 1;
-    }
-
 }
