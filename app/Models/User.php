@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-
+use App\Models\Project;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -47,6 +47,11 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'owner_id');
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // yahan abhi simple is_admin check rakhtay hain
