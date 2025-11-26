@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Project\Pages\RegisterProject;
 
 class ProjectPanelProvider extends PanelProvider
 {
@@ -46,6 +47,7 @@ class ProjectPanelProvider extends PanelProvider
                 slugAttribute: 'slug', // projects.slug se tenant resolve hoga [web:211]
             )
             ->tenantDomain('{tenant:slug}.cip-tools.de') // work.cip-tools.de → slug=work [web:211][web:176]
+            ->tenantRegistration(RegisterProject::class)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

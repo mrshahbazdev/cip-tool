@@ -41,7 +41,8 @@
                     CIP Tools gives small and mid‑size teams an easy way to organize work, share schedules and stay aligned across locations.
                 </p>
                 <div class="flex flex-wrap items-center gap-3">
-                    <a href="#pricing" class="rounded-md bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-400">
+                    <a href="{{ route('filament.project.tenant.registration') }}"
+                    class="rounded-md bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-400">
                         Start free trial
                     </a>
                     <a href="#product" class="text-sm text-slate-700 hover:text-slate-900">
