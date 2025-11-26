@@ -2,14 +2,15 @@
 
 namespace App\Filament\Project\Pages;
 
-use App\Models\Project;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Project;
+use App\Models\User;
+
 
 class RegisterProject extends RegisterTenant
 {
@@ -18,9 +19,9 @@ class RegisterProject extends RegisterTenant
         return 'Start free trial';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Forms\Components\Section::make('Workspace')
                 ->description('Create a workspace for your company or team.')
                 ->schema([
@@ -35,7 +36,7 @@ class RegisterProject extends RegisterTenant
                         ->required()
                         ->alphaDash()
                         ->maxLength(50)
-                        ->live(onBlur: true) // real-time-ish check [web:319]
+                        ->live(onBlur: true)
                         ->unique(Project::class, 'slug'),
                 ])
                 ->columns(2),
@@ -77,32 +78,25 @@ class RegisterProject extends RegisterTenant
 
     protected function handleRegistration(array $data): Project
     {
-        // Owner user create karo
         $user = User::create([
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'password'  => Hash::make($data['password']),
-            'is_admin'  => true, // ya jo bhi flag tum use kar rahe ho
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
 
-        // Project create karo
         $project = Project::create([
-            'name'          => $data['project_name'],
-            'slug'          => $data['slug'],
-            'owner_id'      => $user->id,
-            'bonus_enabled' => false,
-            'is_active'     => true,
+            'name'      => $data['project_name'],
+            'slug'      => $data['slug'],
+            'owner_id'  => $user->id,
+            'is_active' => true,
         ]);
 
-        // Owner ko member attach karo
         $project->members()->attach($user->id, ['role' => 'project_admin']);
 
-        // Optionally user ko auto login karao
         auth()->login($user);
 
         Notification::make()
             ->title('Workspace created')
-            ->body('Your trial workspace is ready. You can now invite your team.')
             ->success()
             ->send();
 
