@@ -4,15 +4,11 @@ namespace App\Filament\Project\Pages;
 
 use App\Models\Project;
 use App\Models\User;
+use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Tenancy\RegisterTenant;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Checkbox;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\TextInput;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-
 
 class RegisterProject extends RegisterTenant
 {
@@ -21,18 +17,19 @@ class RegisterProject extends RegisterTenant
         return 'Start free trial';
     }
 
-    public function form(Schema $schema): Schema
+    // Yahan koi type-hint nahi (na parameter pe, na return pe)
+    public function form($schema)
     {
         return $schema->schema([
-            Section::make('Workspace')
+            Forms\Components\Section::make('Workspace')
                 ->description('Create a workspace for your company or team.')
                 ->schema([
-                    TextInput::make('project_name')
+                    Forms\Components\TextInput::make('project_name')
                         ->label('Workspace name')
                         ->required()
                         ->maxLength(255),
 
-                    TextInput::make('slug')
+                    Forms\Components\TextInput::make('slug')
                         ->label('Subdomain')
                         ->helperText('This becomes your link, for example work.cip-tools.de')
                         ->required()
@@ -43,36 +40,36 @@ class RegisterProject extends RegisterTenant
                 ])
                 ->columns(2),
 
-            Section::make('Your account')
+            Forms\Components\Section::make('Your account')
                 ->description('This will be the admin user for this workspace.')
                 ->schema([
-                    TextInput::make('name')
+                    Forms\Components\TextInput::make('name')
                         ->label('Your name')
                         ->required()
                         ->maxLength(255),
 
-                    TextInput::make('email')
+                    Forms\Components\TextInput::make('email')
                         ->label('Work email')
                         ->email()
                         ->required()
                         ->maxLength(255)
                         ->unique(User::class, 'email'),
 
-                    TextInput::make('password')
+                    Forms\Components\TextInput::make('password')
                         ->label('Password')
                         ->password()
                         ->required()
                         ->rule(Password::defaults())
                         ->same('password_confirmation'),
 
-                    TextInput::make('password_confirmation')
+                    Forms\Components\TextInput::make('password_confirmation')
                         ->label('Confirm password')
                         ->password()
                         ->required(),
                 ])
                 ->columns(2),
 
-            Checkbox::make('accept_terms')
+            Forms\Components\Checkbox::make('accept_terms')
                 ->label('I agree to the terms and privacy policy')
                 ->required(),
         ]);
@@ -105,4 +102,3 @@ class RegisterProject extends RegisterTenant
         return $project;
     }
 }
-
