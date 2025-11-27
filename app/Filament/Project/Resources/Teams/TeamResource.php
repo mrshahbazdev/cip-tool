@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Schemas\Schema;
 
 class TeamResource extends Resource
 {
@@ -24,21 +25,20 @@ class TeamResource extends Resource
     protected static ?string $navigationLabel = 'Teams';
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+        return $schema->schema([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
 
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+            Forms\Components\TextInput::make('slug')
+                ->required()
+                ->maxLength(255),
 
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-            ]);
+            Forms\Components\Textarea::make('description')
+                ->columnSpanFull(),
+        ]);
     }
 
     public static function table(Table $table): Table
