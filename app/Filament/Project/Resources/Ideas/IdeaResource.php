@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+
 class IdeaResource extends Resource
 {
     protected static ?string $model = Idea::class;
@@ -22,7 +23,7 @@ class IdeaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {
@@ -58,7 +59,7 @@ class IdeaResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('cost')
-                    ->money('eur') // ya jo bhi currency
+                    ->money('eur')
                     ->sortable(),
 
                 TextColumn::make('duration')
@@ -80,7 +81,7 @@ class IdeaResource extends Resource
                 Tables\Filters\SelectFilter::make('team_name')
                     ->label('Team')
                     ->options(
-                        fn () => \App\Models\Idea::query()
+                        fn () => Idea::query()
                             ->distinct()
                             ->pluck('team_name', 'team_name')
                             ->filter()
@@ -92,9 +93,7 @@ class IdeaResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
