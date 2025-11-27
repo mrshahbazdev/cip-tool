@@ -109,4 +109,12 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $this->hasMany(Project::class, 'owner_id');
     }
+    public function teams(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this
+            ->belongsToMany(\App\Models\Team::class, 'team_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
 }
