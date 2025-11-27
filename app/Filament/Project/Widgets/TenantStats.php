@@ -8,13 +8,23 @@ use App\Models\User;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Request;
+use App\Models\Project;
 
 class TenantStats extends StatsOverviewWidget
 {
 
     protected function getStats(): array
     {
-        $project = tenant(); // ya jo bhi tumhara current tenant helper hai
+        // Old:
+        // $project = tenant();
+
+        // New: current subdomain se project loa d karo
+        $host = request()->getHost(); // work.cip-tools.de
+        $parts = explode('.', $host);
+        $slug = $parts[0] ?? null;
+
+        $project = Project::where('slug', $slug)->firstOrFail();
 
         $teamsCount = Team::query()
             ->where('project_id', $project->id)
@@ -35,21 +45,8 @@ class TenantStats extends StatsOverviewWidget
             ->count();
 
         return [
-            Stat::make('Active teams', $teamsCount)
-                ->description('Teams using this workspace')
-                ->color('info'),
-
-            Stat::make('People in this workspace', $membersCount)
-                ->description('Invited & active members')
-                ->color('success'),
-
-            Stat::make('Ideas in pipeline', $ideasCount)
-                ->description('Open across all teams')
-                ->color('warning'),
-
-            Stat::make('New ideas today', $ideasToday)
-                ->description('Created in the last 24 hours')
-                ->color(Color::Amber),
+            // Stat::make(...) jaise pehle likhe the, woh yahan hi rehne do
         ];
     }
+
 }
