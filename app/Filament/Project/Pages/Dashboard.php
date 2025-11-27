@@ -3,6 +3,7 @@
 namespace App\Filament\Project\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
+use App\Filament\Project\Widgets\QuickIdeaSubmission;
 
 class Dashboard extends BaseDashboard
 {
@@ -16,7 +17,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             \App\Filament\Project\Widgets\TenantStats::class,
-            // ...baad me aur widgets
+            QuickIdeaSubmission::class,
         ];
     }
 
