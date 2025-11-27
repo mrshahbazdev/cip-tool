@@ -2,6 +2,7 @@
 
 namespace App\Filament\Project\Widgets;
 
+use App\Models\Idea;
 use App\Models\Project;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -60,7 +61,7 @@ class QuickIdeaSubmission extends Widget implements Forms\Contracts\HasForms
 
     protected function getFormModel(): string
     {
-        return \stdClass::class;
+        return Idea::class;
     }
 
     protected function getFormStatePath(): ?string
@@ -70,17 +71,31 @@ class QuickIdeaSubmission extends Widget implements Forms\Contracts\HasForms
 
     public function submit(): void
     {
-        // Sirf validation + reset, DB me kuch mat save karo
+        $host = request()->getHost();
+        $slug = explode('.', $host)[0] ?? null;
 
-        $this->validate(); // form rules already fields pe lagi hui hain
+        $project = Project::where('slug', $slug)->firstOrFail();
+
+        $data = $this->form->getState();
+
+        Idea::create([
+            'project_id'   => $project->id,
+            'title'        => $data['title'],
+            'description'  => $data['description'],
+            'team_name'    => $data['team_name'],
+            'pain_score'   => $data['pain_score'],
+            'cost'         => $data['cost'],
+            'duration'     => $data['duration'],
+            'status'       => 'new',
+            'created_by'   => auth()->id(),
+        ]);
 
         $this->form->fill();
 
         Notification::make()
             ->title('Idea submitted')
-            ->body('Your idea has been captured. (Storage not wired yet.)')
+            ->body('Your idea has been added to the pipeline.')
             ->success()
             ->send();
     }
-
 }
