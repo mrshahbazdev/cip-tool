@@ -106,9 +106,9 @@ class TeamResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListTeams::route('/'),
-            'create' => Pages\CreateTeam::route('/create'),
-            'edit'   => Pages\EditTeam::route('/{record}/edit'),
+            'index'  => Teams\Pages\ListTeams::route('/'),
+            'create' => Teams\Pages\CreateTeam::route('/create'),
+            'edit'   => Teams\Pages\EditTeam::route('/{record}/edit'),
         ];
     }
 }
