@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 class IdeaResource extends Resource
 {
     protected static ?string $model = Idea::class;
+    protected static ?string $tenantOwnershipRelationshipName = 'project';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
