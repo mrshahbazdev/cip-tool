@@ -11,7 +11,8 @@ class EnsureProjectTenantExists
 {
     public function handle(Request $request, Closure $next)
     {
-        $host = $request->getHost();        // e.g. work.cip-tools.de
+        $host = $request->getHost();
+        // e.g. work.cip-tools.de
         $parts = explode('.', $host);
         $subdomain = $parts[0] ?? null;     // work
 
